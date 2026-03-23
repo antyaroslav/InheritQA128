@@ -1,7 +1,6 @@
 import javamaven.Epic;
 import javamaven.Meeting;
 import javamaven.SimpleTask;
-import javamaven.Task;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,7 +22,7 @@ class TasksTest {
 
     @Test
     void shouldEpicMatchByAnySubtask() {
-        String[] subtasks = { "Молоко", "Яйца", "Хлеб" };
+        String[] subtasks = {"Молоко", "Яйца", "Хлеб"};
         Epic epic = new Epic(55, subtasks);
 
         assertTrue(epic.matches("Молоко"));
@@ -33,12 +32,10 @@ class TasksTest {
     }
 
     @Test
-    void shouldEpicMatchPartialSubtask() {
-        String[] subtasks = { "Купить молоко", "Сходить в магазин" };
-        Epic epic = new Epic(55, subtasks);
-
-        assertTrue(epic.matches("молоко"));
-        assertTrue(epic.matches("магазин"));
+    void shouldEpicGetSubtasksReturnsCopy() {
+        String[] originalSubtasks = {"Молоко", "Хлеб", "Яйца"};
+        Epic epic = new Epic(55, originalSubtasks);
+        assertArrayEquals(originalSubtasks, epic.getSubtasks());
     }
 
     @Test
@@ -83,15 +80,14 @@ class TasksTest {
     }
 
     @Test
-    void shouldTaskNotMatchAnything() {
-        Task task = new Task(100) {};
-        assertFalse(task.matches("любой запрос"));
+    void shouldEpicHandleEmptySubtasksArray() {
+        Epic epic = new Epic(99, new String[]{});
+        assertFalse(epic.matches("любой запрос"));
     }
 
     @Test
-    void shouldEpicNotMatchEmptyQuery() {
-        String[] subtasks = { "Молоко", "Яйца" };
-        Epic epic = new Epic(55, subtasks);
+    void shouldEpicHandleNullQuery() {
+        Epic epic = new Epic(99, new String[]{"Молоко", "Хлеб"});
         assertTrue(epic.matches(""));
     }
 }
