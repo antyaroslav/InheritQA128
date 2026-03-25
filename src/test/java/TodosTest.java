@@ -85,7 +85,6 @@ class TodosTest {
         todos.add(new SimpleTask(1, "Купить хлеб"));
         todos.add(new SimpleTask(2, "Сходить в магазин"));
         Task[] result = todos.search("кофе");
-        assertEquals(0, result.length);
         assertArrayEquals(new Task[]{}, result);
     }
 
@@ -93,7 +92,6 @@ class TodosTest {
     void shouldSearchWorkWithEmptyTodos() {
         Todos todos = new Todos();
         Task[] result = todos.search("любой запрос");
-        assertEquals(0, result.length);
         assertArrayEquals(new Task[]{}, result);
     }
 
@@ -103,8 +101,6 @@ class TodosTest {
         Epic epic = new Epic(55, originalSubtasks);
         originalSubtasks[0] = "Сыр";
         String[] epicSubtasks = epic.getSubtasks();
-        assertEquals("Молоко", epicSubtasks[0]);
-        assertEquals("Хлеб", epicSubtasks[1]);
         assertArrayEquals(new String[]{"Молоко", "Хлеб"}, epicSubtasks);
     }
 }
