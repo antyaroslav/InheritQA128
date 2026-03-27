@@ -105,10 +105,10 @@ class TodosTest {
     void shouldNotModifyOriginalArrays() {
         String[] originalSubtasks = {"Молоко", "Хлеб"};
         Epic epic = new Epic(55, originalSubtasks);
+        String[] expectedCopy = {"Молоко", "Хлеб"};
         originalSubtasks[0] = "Сыр";
         String[] epicSubtasks = epic.getSubtasks();
-        assertArrayEquals(new String[]{"Молоко", "Хлеб"}, originalSubtasks);
-        assertArrayEquals(new String[]{"Молоко", "Хлеб"}, epicSubtasks);
+        assertArrayEquals(expectedCopy, epicSubtasks);
     }
 
     @Test
