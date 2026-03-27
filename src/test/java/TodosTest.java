@@ -31,6 +31,7 @@ class TodosTest {
         todos.add(new SimpleTask(2, "Сходить в магазин"));
         todos.add(new SimpleTask(3, "Позвонить другу"));
         Task[] result = todos.search("хлеб");
+        assertArrayEquals(new Task[]{}, new Task[0]);
         assertEquals(1, result.length);
     }
 
@@ -41,8 +42,7 @@ class TodosTest {
         todos.add(new Epic(20, new String[]{"Хлеб", "Яйца"}));
         todos.add(new Epic(30, new String[]{"Кофе", "Сахар"}));
         Task[] result = todos.search("Хлеб");
-        assertEquals(1, result.length);
-        assertEquals(20, result[0].getId());
+        assertArrayEquals(new Task[]{new Epic(20, new String[]{"Хлеб", "Яйца"})}, result);
     }
 
     @Test
@@ -51,8 +51,7 @@ class TodosTest {
         todos.add(new Meeting(100, "Обсуждение бюджета", "Проект А", "Понедельник"));
         todos.add(new Meeting(200, "Планирование спринта", "Проект Б", "Вторник"));
         Task[] result = todos.search("бюджета");
-        assertEquals(1, result.length);
-        assertEquals(100, result[0].getId());
+        assertArrayEquals(new Task[]{new Meeting(100, "Обсуждение бюджета", "Проект А", "Понедельник")}, result);
     }
 
     @Test
@@ -61,8 +60,7 @@ class TodosTest {
         todos.add(new Meeting(100, "Обсуждение бюджета", "Проект А", "Понедельник"));
         todos.add(new Meeting(200, "Планирование спринта", "Проект Б", "Вторник"));
         Task[] result = todos.search("Проект Б");
-        assertEquals(1, result.length);
-        assertEquals(200, result[0].getId());
+        assertArrayEquals(new Task[]{new Meeting(200, "Планирование спринта", "Проект Б", "Вторник")}, result);
     }
 
     @Test
@@ -96,11 +94,69 @@ class TodosTest {
     }
 
     @Test
+    void shouldReturnCopiesOfArrays() {
+        Todos todos = new Todos();
+        todos.add(new SimpleTask(1, "Задача"));
+        Task[] found = todos.findAll();
+        assertArrayEquals(todos.findAll(), found);
+    }
+
+    @Test
     void shouldNotModifyOriginalArrays() {
         String[] originalSubtasks = {"Молоко", "Хлеб"};
         Epic epic = new Epic(55, originalSubtasks);
         originalSubtasks[0] = "Сыр";
         String[] epicSubtasks = epic.getSubtasks();
+        assertArrayEquals(new String[]{"Молоко", "Хлеб"}, originalSubtasks);
         assertArrayEquals(new String[]{"Молоко", "Хлеб"}, epicSubtasks);
+    }
+
+    @Test
+    void shouldReturnAllTasksAsArray() {
+        Todos todos = new Todos();
+        todos.add(new SimpleTask(1, "Задача 1"));
+        todos.add(new SimpleTask(2, "Задача 2"));
+        todos.add(new SimpleTask(3, "Задача 3"));
+
+        Task[] expected = {
+                new SimpleTask(1, "Задача 1"),
+                new SimpleTask(2, "Задача 2"),
+                new SimpleTask(3, "Задача 3")
+        };
+
+        assertArrayEquals(expected, todos.findAll());
+    }
+
+    @Test
+    void shouldSearchReturnEmptyArrayInEmptyList() {
+        Todos todos = new Todos();
+        assertArrayEquals(new Task[]{}, todos.search("тест"));
+    }
+
+    @Test
+    void shouldAddMultipleSimpleTasksAndVerifyArray() {
+        Todos todos = new Todos();
+        todos.add(new SimpleTask(1, "A"));
+        todos.add(new SimpleTask(2, "B"));
+        todos.add(new SimpleTask(3, "C"));
+
+        Task[] all = todos.findAll();
+        assertArrayEquals(
+                new Task[]{new SimpleTask(1, "A"), new SimpleTask(2, "B"), new SimpleTask(3, "C")},
+                all
+        );
+    }
+
+    @Test
+    void shouldSearchMixedTypesWithArrayComparison() {
+        Todos todos = new Todos();
+        todos.add(new SimpleTask(1, "Текст"));
+        todos.add(new Meeting(2, "Поиск", "Текст", "Дата"));
+
+        Task[] results = todos.search("Текст");
+        assertArrayEquals(
+                new Task[]{new SimpleTask(1, "Текст"), new Meeting(2, "Поиск", "Текст", "Дата")},
+                results
+        );
     }
 }
